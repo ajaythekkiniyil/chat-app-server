@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose")
+const mongoose = require("mongoose")
 
 const connectDb = async () => {
     try {
@@ -8,7 +8,6 @@ const connectDb = async () => {
     catch (err) {
         console.error('database connection err', err.message)
     }
-
 }
 
 module.exports = connectDb
