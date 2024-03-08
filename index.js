@@ -1,12 +1,16 @@
 const express = require('express')
 const dotenv = require('dotenv')
+const connectDb = require('./helper/connectDb')
 
 const app = express()
 
 // configure .env
 dotenv.config()
 
-app.get('/', (req,res)=>{
+// db connection
+connectDb()
+
+app.get('/', (req, res) => {
     res.send('...')
 })
 
