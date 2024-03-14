@@ -13,7 +13,13 @@ dotenv.config()
 // db connection
 connectDb()
 
-app.use(cors())
+const corsOptions = {
+    origin: "http://localhost:5173",
+    methods: "GET,POST",
+    credentials: true,
+}
+
+app.use(cors(corsOptions))
 
 app.use(cookieParser())
 
