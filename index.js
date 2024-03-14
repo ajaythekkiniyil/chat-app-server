@@ -3,14 +3,19 @@ const dotenv = require('dotenv')
 const connectDb = require('./helper/connectDb')
 const userRoute = require('./routes/userRoute')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const cors = require('cors')
 
 const app = express()
 
 // configure .env
 dotenv.config()
-
 // db connection
 connectDb()
+
+app.use(cors())
+
+app.use(cookieParser())
 
 // parse application/json
 app.use(bodyParser.json())

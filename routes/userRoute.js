@@ -1,20 +1,13 @@
 const express = require('express')
 const router = express.Router()
-const { signupController, loginController } = require('../controllers/userController')
-const { body } = require('express-validator')
+const { signupController, loginController, getsomedata } = require('../controllers/userController')
+const { validateSignUp, validateLogin } = require('../helper/inputValidate')
+const verifyToken = require('../helper/verifyToken')
 
-// input validation using express-validator
-router.post('/signup',
-    [
-        body('email').isEmail().normalizeEmail(), 
-        body('password')
-            .isLength({ min: 4 }).withMessage("Password must be at least 4 characters long")
-            .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
-            .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
-            .matches(/\d/).withMessage('Password must contain at least one number')
-    ]
-    , signupController)
+// validateSignUp is for input sanitization
+router.post('/signup', validateSignUp, signupController)
+router.post('/login', validateLogin, loginController)
+router.get('/data', verifyToken, getsomedata)
 
-router.post('/login', loginController)
 
 module.exports = router
