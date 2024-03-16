@@ -5,6 +5,7 @@ const chatSchema = new Schema(
     {
         chatName: {
             type: String,
+            default: 'personal'
         },
         isGroupChat: {
             type: Boolean,
@@ -18,11 +19,11 @@ const chatSchema = new Schema(
         ],
         latestMessage: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Message'
+            ref: 'Message',
         },
         groupAdmin: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
         }
     },
     {

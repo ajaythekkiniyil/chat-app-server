@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const verifyToken = require('../helper/verifyToken')
-const { getAllUsers, searchUsers } = require('../controllers/chatController')
+const { getAllUsers, searchUsers, createConversation } = require('../controllers/chatController')
 
 // all users in our apps
 router.get('/get-all-users', verifyToken, getAllUsers)
@@ -9,7 +9,8 @@ router.get('/get-all-users', verifyToken, getAllUsers)
 // search users based on name
 router.post('/search-users', verifyToken, searchUsers)
 
-// create one-to-one chat
+// create new one-to-one chat
+router.post('/create-converation', verifyToken, createConversation)
 
 // fetch all conversations list of mine
 
