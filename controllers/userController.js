@@ -2,8 +2,6 @@ const { validationResult } = require("express-validator")
 const userModel = require('../models/userModel')
 const bcrypt = require('bcrypt')
 const createToken = require('../helper/createToken')
-const jwt = require('jsonwebtoken')
-const verifyToken = require("../helper/verifyToken")
 
 const options = {
     // maxAge: 1000 * 60 * 15, // expire after 15 minutes
@@ -68,8 +66,5 @@ module.exports = {
                 })
             }
         }
-    },
-    getsomedata: (req, res) => {
-        res.send('your data')
     }
 }
