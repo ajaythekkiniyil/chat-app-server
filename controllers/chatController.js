@@ -3,8 +3,9 @@ const chatModel = require('../models/chatModel')
 
 module.exports = {
     getAllUsers: async (req, res) => {
-        const allUsers = await userModel.find().select('-password')
-        const totalUsers = await userModel.countDocuments()
+        const userId = req.user.id
+        const allUsers = await userModel.find({ _id: { $ne: userId } }).select('-password')
+        const totalUsers = await userModel.find({ _id: { $ne: userId } }).countDocuments()
         res.status(200).json({ totalUsers, allUsers })
     },
     searchUsers: async (req, res) => {
@@ -37,12 +38,33 @@ module.exports = {
             users: [sender, receiver]
         }
 
-        try{
+        try {
             const newConversation = await chatModel.create(converationData)
             res.send(newConversation)
         }
-        catch(err){
+        catch (err) {
             res.send(err)
         }
+    },
+    getAllConversations: (req, res) => {
+        const userId = req.user.id
+
+        chatModel.find({
+            users: userId
+        })
+            .then(resp => {
+                res.status(200).json(resp)
+            })
+            .catch(err => {
+                res.status(401).json(err)
+            })
+    },
+    getUserDetails: (req, res) => {
+        const { userId } = req.body
+
+        userModel.findOne({ _id: userId }).select('-password')
+            .then(resp => {
+                res.status(200).json(resp)
+            }).catch(err => res.status(401).json(err))
     }
 }

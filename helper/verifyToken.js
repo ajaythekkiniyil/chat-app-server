@@ -7,6 +7,7 @@ const verifyToken = (req, res, next) => {
 
     try {
         const result = jwt.verify(token, process.env.JWT_SCECRET)
+        req.user = result
         // jwt token verified
         next()
     }
