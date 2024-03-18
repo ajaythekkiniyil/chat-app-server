@@ -43,7 +43,7 @@ module.exports = {
             res.send(newConversation)
         }
         catch (err) {
-            res.send(err)
+            res.status(400).json("create conversation error",err)
         }
     },
     getAllConversations: (req, res) => {
@@ -66,5 +66,57 @@ module.exports = {
             .then(resp => {
                 res.status(200).json(resp)
             }).catch(err => res.status(401).json(err))
+    },
+    createGroup: (req, res) => {
+        // userId is logged in user id
+        const userId = req.user.id
+        const { chatName, members } = req.body
+
+        // group members list (id's)
+        const membersList = [...members, userId]
+
+        const newGroup = {
+            chatName: chatName,
+            isGroupChat: true,
+            users: membersList,
+            groupAdmin: userId,
+        }
+
+        chatModel.create(newGroup)
+            .then(resp => {
+                res.status(200).json('group created')
+            })
+            .catch(err => {
+                res.status(500).json('group creation error')
+            })
+    },
+    getAllGroups: (req, res) => {
+        // userId is logged in user id
+        const userId = req.user.id
+
+        chatModel.find({ $and: [{ isGroupChat: true }, { users: userId }] })
+            .then(resp => {
+                res.status(200).json(resp)
+            })
+            .catch(err => {
+                res.status(500).json('error while getting all groups list')
+            })
+    },
+    exitGroup: (req, res) => {
+        // userId of person want to exit from group
+        const { groupId, userId } = req.body
+        chatModel.updateOne(
+            { _id: groupId },
+            {
+                $pull: { 
+                    users: userId
+                }
+            }
+        ).then(resp=>{
+            res.status(200).json('user removed from group')
+        })
+        .catch(err=>{
+            res.status(500).json('error while removing user from groups')
+        })
     }
 }

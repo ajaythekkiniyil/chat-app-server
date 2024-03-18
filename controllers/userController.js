@@ -58,7 +58,7 @@ module.exports = {
                         const token = await createToken(user._id)
                         // setting token in cookie
                         res.cookie("token", token, options)
-                        return res.status(200).json({ success: true, message: "Login successfull", userId: user._id })
+                        return res.status(200).json({ success: true, message: "Login successfull", userId: user._id, userName: user.name })
                     }
                     else {
                         return res.status(404).json({ success: false, message: 'incorrect email or password' })

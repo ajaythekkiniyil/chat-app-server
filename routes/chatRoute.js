@@ -1,7 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const verifyToken = require('../helper/verifyToken')
-const { getAllUsers, searchUsers, createConversation, getAllConversations, getUserDetails } = require('../controllers/chatController')
+const { getAllUsers,
+    searchUsers,
+    createConversation,
+    getAllConversations,
+    getUserDetails,
+    createGroup,
+    getAllGroups,
+    exitGroup
+} = require('../controllers/chatController')
 
 // all users in our apps
 router.get('/get-all-users', verifyToken, getAllUsers)
@@ -19,11 +27,13 @@ router.get('/get-all-conversations', verifyToken, getAllConversations)
 router.post('/get-user-details', verifyToken, getUserDetails)
 
 // create group
+router.post('/create-group', verifyToken, createGroup)
 
 // fetch all groups
-
+router.get('/get-all-group', verifyToken, getAllGroups)
 // add me to group
 
 // group exit
+router.post('/exit-group', verifyToken, exitGroup)
 
 module.exports = router
