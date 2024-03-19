@@ -11,6 +11,10 @@ const chatSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        groupImage: {
+            type: String,
+            default: 'https://voheroes.com/wp-content/plugins/buddyboss-platform/bp-core/images/group-avatar-buddyboss.png'
+        },
         users: [
             {
                 type: mongoose.Schema.Types.ObjectId,

@@ -43,7 +43,7 @@ module.exports = {
             res.send(newConversation)
         }
         catch (err) {
-            res.status(400).json("create conversation error",err)
+            res.status(400).json("create conversation error", err)
         }
     },
     getAllConversations: (req, res) => {
@@ -108,15 +108,31 @@ module.exports = {
         chatModel.updateOne(
             { _id: groupId },
             {
-                $pull: { 
+                $pull: {
                     users: userId
                 }
             }
-        ).then(resp=>{
+        ).then(resp => {
             res.status(200).json('user removed from group')
-        })
-        .catch(err=>{
+        }).catch(err => {
             res.status(500).json('error while removing user from groups')
+        })
+    },
+    AddToGroup: (req, res) => {
+        const { groupId, userId } = req.body
+        chatModel.updateOne(
+            {
+                _id: groupId
+            },
+            {
+                $addToSet: {
+                    users: userId
+                }
+            }
+        ).then(resp => {
+            res.status(200).json('user added to group')
+        }).catch(err => {
+            res.status(500).json('error while adding user to groups')
         })
     }
 }

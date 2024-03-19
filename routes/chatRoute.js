@@ -8,6 +8,7 @@ const { getAllUsers,
     getUserDetails,
     createGroup,
     getAllGroups,
+    AddToGroup,
     exitGroup
 } = require('../controllers/chatController')
 
@@ -31,7 +32,9 @@ router.post('/create-group', verifyToken, createGroup)
 
 // fetch all groups
 router.get('/get-all-group', verifyToken, getAllGroups)
-// add me to group
+
+// add user to group
+router.post('/add-to-group', verifyToken, AddToGroup)
 
 // group exit
 router.post('/exit-group', verifyToken, exitGroup)
