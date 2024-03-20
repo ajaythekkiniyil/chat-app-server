@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const connectDb = require('./helper/connectDb')
 const userRoute = require('./routes/userRoute')
 const chatRoute = require('./routes/chatRoute')
+const messageRoute = require('./routes/messageRoute')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/user', userRoute)
 app.use('/api/chat', chatRoute)
+app.use('/api/message', messageRoute)
 
 const port = process.env.PORT
 app.listen(port, console.log(`server started on: ${port}`))

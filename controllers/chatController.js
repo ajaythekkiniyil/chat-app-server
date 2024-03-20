@@ -22,10 +22,10 @@ module.exports = {
         const conversationExist = await chatModel.find({
             $and: [
                 {
-                    users: { $elemMatch: { $eq: sender } }
+                    users: sender
                 },
                 {
-                    users: { $elemMatch: { $eq: receiver } }
+                    users: receiver
                 }
             ]
         })

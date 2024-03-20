@@ -5,7 +5,6 @@ const chatSchema = new Schema(
     {
         chatName: {
             type: String,
-            default: 'personal'
         },
         isGroupChat: {
             type: Boolean,
@@ -13,7 +12,9 @@ const chatSchema = new Schema(
         },
         groupImage: {
             type: String,
-            default: 'https://voheroes.com/wp-content/plugins/buddyboss-platform/bp-core/images/group-avatar-buddyboss.png'
+            default: function () {
+                return this.isGroupChat ? 'https://voheroes.com/wp-content/plugins/buddyboss-platform/bp-core/images/group-avatar-buddyboss.png' : ''
+            }
         },
         users: [
             {
