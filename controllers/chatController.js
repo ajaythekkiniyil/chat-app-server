@@ -62,6 +62,8 @@ module.exports = {
     getUserDetails: (req, res) => {
         const { userId } = req.body
 
+        if (!userId) return res.status(401).json("missing field")
+
         userModel.findOne({ _id: userId }).select('-password')
             .then(resp => {
                 res.status(200).json(resp)
@@ -71,6 +73,14 @@ module.exports = {
         // userId is logged in user id
         const userId = req.user.id
         const { chatName, members } = req.body
+
+        if (!chatName) {
+            return res.status(500).json('please send chatName')
+        }
+
+        if (members.length === 0) {
+            return res.status(500).json('members list empty')
+        }
 
         // group members list (id's)
         const membersList = [...members, userId]
