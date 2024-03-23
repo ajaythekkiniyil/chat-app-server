@@ -17,6 +17,9 @@ const messageSchema = new Schema(
         },
         message: {
             type: String,
+        },
+        file: {
+            type: String,
         }
     },
     {
