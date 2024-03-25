@@ -72,7 +72,7 @@ module.exports = {
         const { conversationId } = req.body
 
         if (!conversationId) {
-            return res.status(500).json('please send all fields')
+            return res.status(500).json('please send conversationId')
         }
 
         try {
@@ -105,6 +105,52 @@ module.exports = {
         }
         catch (err) {
             res.status(500).json({ "error during get all messages": err })
+        }
+    },
+    sendGroupMessage: async (req, res) => {
+        const sender = req.user.id
+        const { groupId, message } = req.body
+
+        if (!groupId) {
+            return res.status(500).json('please send groupId')
+        }
+
+        if (!message) {
+            return res.status(500).json('please send message')
+        }
+
+        // if groupExist exist or chat started
+        const groupExist = await chatModel.find({ _id: groupId })
+
+        if (groupExist.length === 0) {
+            return res.status(401).json('group not exist')
+        }
+
+        const conversationId = groupExist[0]._id
+
+        messageModel.create({
+            conversationId: conversationId,
+            sender: sender,
+            message: message,
+        }).then(resp => {
+            res.status(200).json('message send to group successfull')
+        }).catch(err => {
+            res.status(500).json('error while sending message to group')
+        })
+    },
+    getAllGroupMessage: async(req, res) => {
+        const { conversationId } = req.body
+
+        if (!conversationId) {
+            return res.status(500).json('please send conversationId')
+        }
+
+        try{
+            const allMessages = await messageModel.find({ conversationId: conversationId })
+            res.send(allMessages)
+        }
+        catch(err){
+            res.status(500).json({ "error during get all group messages": err })
         }
     }
 }
