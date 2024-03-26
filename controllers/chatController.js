@@ -59,15 +59,21 @@ module.exports = {
                 res.status(401).json(err)
             })
     },
-    getUserDetails: (req, res) => {
+    getUserDetails: async(req, res) => {
         const { userId } = req.body
 
         if (!userId) return res.status(401).json("missing field")
 
-        userModel.findOne({ _id: userId }).select('-password')
-            .then(resp => {
-                res.status(200).json(resp)
-            }).catch(err => res.status(401).json(err))
+        const userDetails = await userModel.findOne({ _id: userId }).select('-password')
+        if(userDetails){
+            res.send(userDetails)
+        }
+        else{
+            // check if group chat
+            const groupDetails = await chatModel.findOne({ _id: userId })
+            res.send(groupDetails)
+        }
+        
     },
     createGroup: (req, res) => {
         // userId is logged in user id
