@@ -14,7 +14,7 @@ router.post('/send-message', verifyToken, upload.single('file'), sendMessage)
 router.post('/get-messages', verifyToken, getAllMessage)
 
 // send group message
-router.post('/send-group-message', verifyToken, sendGroupMessage)
+router.post('/send-group-message', verifyToken, upload.single('file'), sendGroupMessage)
 
 // get all group messages
 router.post('/get-group-messages', verifyToken, getAllGroupMessage)
