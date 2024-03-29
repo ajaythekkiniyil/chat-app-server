@@ -20,6 +20,12 @@ const messageSchema = new Schema(
         },
         file: {
             type: String,
+        },
+        senderInfo: {
+            type: Object,
+        },
+        receiverInfo: {
+            type: Object,
         }
     },
     {

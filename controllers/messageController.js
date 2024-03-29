@@ -1,5 +1,6 @@
 const messageModel = require('../models/messageModel')
 const chatModel = require('../models/chatModel')
+const userModel = require('../models/userModel')
 const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3")
 const crypto = require('crypto')
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
@@ -55,18 +56,20 @@ module.exports = {
 
         const conversationId = conversation[0]._id
 
+        const senderInfo = await userModel.findOne({ _id: sender }).select('_id -password -createdAt -updatedAt -email')
+        const receiverInfo = await userModel.findOne({ _id: receiver }).select('_id -password -createdAt -updatedAt -email')
 
-        messageModel.create({
+        const newMessage = await messageModel.create({
             conversationId: conversationId,
             sender: sender,
             receiver: receiver,
             message: message,
             file: file ? randomImageName : '',
-        }).then(resp => {
-            res.status(200).json('message send successfull')
-        }).catch(err => {
-            res.status(500).json('error while sending message')
-        })
+            senderInfo: senderInfo,
+            receiverInfo: receiverInfo
+        });
+
+        res.status(200).json('message send successfully');
     },
     getAllMessage: async (req, res) => {
         const { conversationId } = req.body
@@ -104,7 +107,7 @@ module.exports = {
             res.send(updatedAllMessages)
         }
         catch (err) {
-            res.status(500).json({ "error during get all messages": err })
+            res.status(500).json({ "error during get all messages, conversation not exist": err })
         }
     },
     sendGroupMessage: async (req, res) => {
@@ -153,27 +156,28 @@ module.exports = {
 
         const conversationId = groupExist[0]._id
 
-        messageModel.create({
+        const senderInfo = await userModel.findOne({ _id: sender }).select('_id -password -createdAt -updatedAt -email')
+
+        const newMessage = await messageModel.create({
             conversationId: conversationId,
             sender: sender,
             message: message,
             file: file ? randomImageName : '',
-        }).then(resp => {
-            res.status(200).json('message send to group successfull')
-        }).catch(err => {
-            res.status(500).json('error while sending message to group')
-        })
+            senderInfo: senderInfo,
+        });
+
+        res.status(200).json('message send successfully');
     },
-    getAllGroupMessage: async(req, res) => {
+    getAllGroupMessage: async (req, res) => {
         const { conversationId } = req.body
 
         if (!conversationId) {
             return res.status(500).json('please send conversationId')
         }
 
-        try{
+        try {
             const allMessages = await messageModel.find({ conversationId: conversationId })
-            
+
             const s3 = new S3Client({
                 credentials: {
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -196,10 +200,10 @@ module.exports = {
                     return message;
                 })
             )
-            
+
             res.send(updatedAllMessages)
         }
-        catch(err){
+        catch (err) {
             res.status(500).json({ "error during get all group messages": err })
         }
     }
