@@ -63,12 +63,10 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
-    // console.log('user connected')
 
     // if any user send new message to his friend or to group
-    socket.on('chat message', (message, receiverId) => {
-        // console.log("message:", message ,receiverId)
-        socket.emit('chat message', {message, receiverId})
+    socket.on('chat message', (payload) => {
+        io.emit('chat message', payload)
     })
 
     // socket.on('live-user', (user) => {
