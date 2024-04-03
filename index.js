@@ -1,4 +1,9 @@
 const express = require('express')
+const { createServer } = require('node:http')
+const app = express()
+const server = createServer(app)
+const { Server } = require('socket.io')
+
 const dotenv = require('dotenv')
 const connectDb = require('./helper/connectDb')
 const userRoute = require('./routes/userRoute')
@@ -8,16 +13,18 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const { rateLimit } = require('express-rate-limit')
+const { addLiveUser, removeLiveUser, onlineUsers } = require('./socket')
 
-const app = express()
 
 // configure .env
 dotenv.config()
 // db connection
 connectDb()
 
+const frontEndUrl = process.env.FRONT_END_URL
+
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: frontEndUrl,
     methods: "GET,POST",
     credentials: true,
 }
@@ -46,4 +53,34 @@ app.use('/api/chat', chatRoute)
 app.use('/api/message', messageRoute)
 
 const port = process.env.PORT
-app.listen(port, console.log(`server started on: ${port}`))
+
+// socket connection
+const io = new Server(server, {
+    cors: {
+        origin: frontEndUrl
+    },
+    connectionStateRecovery: {}
+})
+
+io.on('connection', (socket) => {
+    // console.log('user connected')
+
+    // if any user send new message to his friend or to group
+    socket.on('chat message', (message, receiverId) => {
+        // console.log("message:", message ,receiverId)
+        socket.emit('chat message', {message, receiverId})
+    })
+
+    // socket.on('live-user', (user) => {
+    //     // storing online user details
+    //     addLiveUser(user, socket.id)
+    // })
+
+    // socket.emit('get-online-users', onlineUsers)
+
+    socket.on('disconnect', () => {
+        // console.log("user disconnected")
+    })
+})
+
+server.listen(port, console.log(`server started on: ${port}`))
