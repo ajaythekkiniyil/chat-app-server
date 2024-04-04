@@ -74,6 +74,10 @@ io.on('connection', (socket) => {
         io.emit('live users', onlineUsers)
     })
 
+    socket.on('typing', (payload)=>{
+        io.emit('typing', payload)
+    })
+
     socket.on('disconnect', () => {
         let onlineUsers = removeLiveUser(socket.id)
         io.emit('live users', onlineUsers)
