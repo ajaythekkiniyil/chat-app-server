@@ -12,11 +12,13 @@ const addLiveUser = (userId, socketId) => {
         // If the user doesn't exist, add a new entry
         onlineUsers.push({ userId, socketId });
     }
+    return onlineUsers
 }
 
 const removeLiveUser = (socketId) => {
     const updatedOnlineUsers = onlineUsers.filter(user => user.socketId !== socketId)
     onlineUsers = updatedOnlineUsers
+    return onlineUsers
 }
 
 module.exports = { onlineUsers, addLiveUser, removeLiveUser }

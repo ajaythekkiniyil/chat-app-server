@@ -13,7 +13,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const { rateLimit } = require('express-rate-limit')
-const { addLiveUser, removeLiveUser, onlineUsers } = require('./socket')
+const { addLiveUser, removeLiveUser } = require('./socket')
 
 
 // configure .env
@@ -63,21 +63,20 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
-
     // if any user send new message to his friend or to group
     socket.on('chat message', (payload) => {
         io.emit('chat message', payload)
     })
 
-    // socket.on('live-user', (user) => {
-    //     // storing online user details
-    //     addLiveUser(user, socket.id)
-    // })
-
-    // socket.emit('get-online-users', onlineUsers)
+    socket.on('live users', (user) => {
+        // storing online user details
+        let onlineUsers = addLiveUser(user, socket.id)
+        io.emit('live users', onlineUsers)
+    })
 
     socket.on('disconnect', () => {
-        // console.log("user disconnected")
+        let onlineUsers = removeLiveUser(socket.id)
+        io.emit('live users', onlineUsers)
     })
 })
 
